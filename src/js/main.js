@@ -4,7 +4,8 @@ const GRID_WIDTH = 1280,
 	GRID_COLS = 64,
 	GAME_SPEED = 100;
 
-let isPlaying = false;
+let isPlaying = false,
+	interval = null;
 
 const root = document.getElementById('root'),
 	table = createTable(GRID_ROWS, GRID_COLS),
@@ -67,15 +68,18 @@ function createControls() {
 		if (!isPlaying) {
 			isPlaying = true;
 			startButton.className = 'icon-pause';
+			interval = setInterval(play, GAME_SPEED);
 		} else {
 			isPlaying = false;
 			startButton.className = 'icon-play';
+			clearInterval(interval);
 		}
 	});
 
 	resetButton.addEventListener('click', event => {
 		isPlaying = false;
 		startButton.className = 'icon-play';
+		clearInterval(interval);
 
 		resetGrid(GRID_ROWS, GRID_COLS);
 		updateTable(GRID_ROWS, GRID_COLS);
@@ -84,6 +88,7 @@ function createControls() {
 	randomButton.addEventListener('click', event => {
 		isPlaying = false;
 		startButton.className = 'icon-play';
+		clearInterval(interval);
 
 		randomizeGrid(GRID_ROWS, GRID_COLS);
 		updateTable(GRID_ROWS, GRID_COLS);
@@ -131,4 +136,97 @@ function resetGrid(rows, cols) {
 			grid[i][j] = 0;
 		}
 	}
+}
+
+function play() {
+	computeNext(GRID_ROWS, GRID_COLS);
+	updateTable(GRID_ROWS, GRID_COLS);
+}
+
+function computeNext(rows, cols) {
+	for (let i = 0; i < rows; i++) {
+		for (let j = 0; j < cols; j++) {
+			applyRules(i, j);
+		}
+	}
+
+	copyGrid(GRID_ROWS, GRID_COLS);
+}
+
+function copyGrid(rows, cols) {
+	for (let i = 0; i < rows; i++) {
+		for (let j = 0; j < cols; j++) {
+			grid[i][j] = nextGrid[i][j];
+			nextGrid[i][j] = 0;
+		}
+	}
+}
+
+function applyRules(row, col) {
+	let neighbours = countNeighbours(row, col);
+
+	if (grid[row][col]) {
+		if (neighbours < 2) {
+			// dies
+			nextGrid[row][col] = 0;
+		} else if (neighbours === 2 || neighbours === 3) {
+			// lives
+			nextGrid[row][col] = 1;
+		} else if (neighbours > 3) {
+			// dies
+			nextGrid[row][col] = 0;
+		}
+
+	} else {
+		if (neighbours === 3) {
+			// revives
+			nextGrid[row][col] = 1;
+		}
+	}
+}
+
+function countNeighbours(row, col) {
+	let counter = 0;
+
+	// top left
+	if (row - 1 >= 0 && col - 1 >= 0)
+		if (grid[row-1][col-1] === 1)
+			counter++;
+
+	// top mid
+	if (row - 1 >= 0)
+		if (grid[row-1][col] === 1)
+			counter++;
+
+	// top right
+	if (row - 1 >= 0 && row + 1 < GRID_ROWS)
+		if (grid[row-1][col+1] === 1)
+			counter++;
+
+	// center left
+	if (col - 1 >= 0)
+		if (grid[row][col-1] === 1)
+			counter++;
+
+	// center right
+	if (col + 1 < GRID_COLS)
+		if (grid[row][col+1] === 1)
+			counter++;
+
+	// bottom left
+	if (row + 1 < GRID_ROWS && col - 1 >= 0)
+		if (grid[row+1][col-1] === 1)
+			counter++;
+
+	// bottom mid
+	if (row + 1 < GRID_ROWS)
+		if (grid[row+1][col] === 1)
+			counter++;
+
+	// bottom right
+	if (row + 1 < GRID_ROWS && col + 1 < GRID_COLS)
+		if (grid[row+1][col+1] === 1)
+			counter++;
+
+	return counter;
 }
