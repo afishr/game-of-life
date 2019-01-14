@@ -7,8 +7,11 @@ const GRID_WIDTH = 1280,
 let isPlaying = false;
 
 const root = document.getElementById('root'),
-	table = createTable(GRID_ROWS, GRID_COLS);
+	table = createTable(GRID_ROWS, GRID_COLS),
+	grid = createGrid(GRID_ROWS, GRID_COLS),
+	nextGrid = createGrid(GRID_ROWS, GRID_COLS);
 createControls();
+
 
 function createTable(rows, cols) {
 	const table = document.createElement('table');
@@ -33,9 +36,16 @@ function createTable(rows, cols) {
 	}
 
 	table.addEventListener('click', event => {
-		if (!event.target.classList.contains('cell'))
+		const aim = event.target;
+		let col = aim.cellIndex,
+			row = aim.parentNode.rowIndex,
+			isAlive = grid[row][col];
+
+		if (!aim.classList.contains('cell'))
 			return;
-		event.target.classList.toggle('alive');
+
+		grid[row][col] = Number(!isAlive)
+		aim.classList.toggle('alive', !isAlive);
 	});
 
 	root.appendChild(table);
@@ -66,14 +76,59 @@ function createControls() {
 	resetButton.addEventListener('click', event => {
 		isPlaying = false;
 		startButton.className = 'icon-play';
+
+		resetGrid(GRID_ROWS, GRID_COLS);
+		updateTable(GRID_ROWS, GRID_COLS);
 	});
 
 	randomButton.addEventListener('click', event => {
 		isPlaying = false;
 		startButton.className = 'icon-play';
-	});
 
+		randomizeGrid(GRID_ROWS, GRID_COLS);
+		updateTable(GRID_ROWS, GRID_COLS);
+	});
 
 	container.append(startButton, resetButton, randomButton);
 	root.appendChild(container);
+}
+
+function createGrid(rows, cols) {
+	let grid = [];
+
+	for (let i = 0; i < rows; i++) {
+		grid[i] = [];
+
+		for (let j = 0; j < cols; j++)
+			grid[i][j] = 0;
+
+	}
+
+	return grid;
+}
+
+function randomizeGrid(rows, cols) {
+	for (let i = 0; i < rows; i++) {
+		for (let j = 0; j < cols; j++) {
+			grid[i][j] = Math.round(Math.random());
+		}
+	}
+}
+
+function updateTable(rows, cols) {
+	for (let i = 0; i < rows; i++) {
+		for (let j = 0; j < cols; j++) {
+			let cell = table.rows[i].cells[j];
+
+			cell.classList.toggle('alive', !!grid[i][j]);
+		}
+	}
+}
+
+function resetGrid(rows, cols) {
+	for (let i = 0; i < rows; i++) {
+		for (let j = 0; j < cols; j++) {
+			grid[i][j] = 0;
+		}
+	}
 }
