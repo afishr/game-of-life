@@ -1,7 +1,7 @@
-const GRID_WIDTH = 1280,
-	GRID_HEIGHT = 720,
-	GRID_ROWS = 100,
-	GRID_COLS = 100,
+const GRID_WIDTH = 640,
+	GRID_HEIGHT = 640,
+	GRID_ROWS = 50,
+	GRID_COLS = 50,
 	GAME_SPEED = 100;
 
 let isPlaying = false,
@@ -40,12 +40,12 @@ function createTable(rows, cols) {
 		const aim = event.target;
 		let col = aim.cellIndex,
 			row = aim.parentNode.rowIndex,
-			isAlive = grid[row][col];
+			isAlive = grid[row][col].value;
 
 		if (!aim.classList.contains('cell'))
 			return;
 
-		grid[row][col] = Number(!isAlive)
+		grid[row][col].value = Number(!isAlive)
 		aim.classList.toggle('alive', !isAlive);
 	});
 
@@ -105,8 +105,10 @@ function createGrid(rows, cols) {
 		grid[i] = [];
 
 		for (let j = 0; j < cols; j++)
-			grid[i][j] = 0;
-
+			grid[i][j] = {
+				value: 0,
+				attribute: 'NORMAL'
+			};
 	}
 
 	return grid;
@@ -115,7 +117,7 @@ function createGrid(rows, cols) {
 function randomizeGrid(rows, cols) {
 	for (let i = 0; i < rows; i++) {
 		for (let j = 0; j < cols; j++) {
-			grid[i][j] = Math.round(Math.random());
+			grid[i][j].value = Math.round(Math.random());
 		}
 	}
 }
@@ -125,7 +127,7 @@ function updateTable(rows, cols) {
 		for (let j = 0; j < cols; j++) {
 			let cell = table.rows[i].cells[j];
 
-			cell.classList.toggle('alive', !!grid[i][j]);
+			cell.classList.toggle('alive', !!grid[i][j].value);
 		}
 	}
 }
@@ -133,7 +135,7 @@ function updateTable(rows, cols) {
 function resetGrid(rows, cols) {
 	for (let i = 0; i < rows; i++) {
 		for (let j = 0; j < cols; j++) {
-			grid[i][j] = 0;
+			grid[i][j].value = 0;
 		}
 	}
 }
@@ -156,8 +158,8 @@ function computeNext(rows, cols) {
 function copyGrid(rows, cols) {
 	for (let i = 0; i < rows; i++) {
 		for (let j = 0; j < cols; j++) {
-			grid[i][j] = nextGrid[i][j];
-			nextGrid[i][j] = 0;
+			Object.assign(grid[i][j], nextGrid[i][j]);
+			nextGrid[i][j].value = 0;
 		}
 	}
 }
@@ -165,22 +167,22 @@ function copyGrid(rows, cols) {
 function applyRules(row, col) {
 	let neighbours = countNeighbours(row, col);
 
-	if (grid[row][col]) {
+	if (grid[row][col].value) {
 		if (neighbours < 2) {
 			// dies
-			nextGrid[row][col] = 0;
+			nextGrid[row][col].value = 0;
 		} else if (neighbours === 2 || neighbours === 3) {
 			// lives
-			nextGrid[row][col] = 1;
+			nextGrid[row][col].value = 1;
 		} else if (neighbours > 3) {
 			// dies
-			nextGrid[row][col] = 0;
+			nextGrid[row][col].value = 0;
 		}
 
 	} else {
 		if (neighbours === 3) {
 			// revives
-			nextGrid[row][col] = 1;
+			nextGrid[row][col].value = 1;
 		}
 	}
 }
@@ -190,42 +192,42 @@ function countNeighbours(row, col) {
 
 	// top left
 	if (row - 1 >= 0 && col - 1 >= 0)
-		if (grid[row-1][col-1] === 1)
+		if (grid[row-1][col-1].value === 1)
 			counter++;
 
 	// top mid
 	if (row - 1 >= 0)
-		if (grid[row-1][col] === 1)
+		if (grid[row-1][col].value === 1)
 			counter++;
 
 	// top right
-	if (row - 1 >= 0 && row + 1 < GRID_ROWS)
-		if (grid[row-1][col+1] === 1)
+	if (row - 1 >= 0 && col + 1 < GRID_COLS)
+		if (grid[row-1][col+1].value === 1)
 			counter++;
 
 	// center left
 	if (col - 1 >= 0)
-		if (grid[row][col-1] === 1)
+		if (grid[row][col-1].value === 1)
 			counter++;
 
 	// center right
 	if (col + 1 < GRID_COLS)
-		if (grid[row][col+1] === 1)
+		if (grid[row][col+1].value === 1)
 			counter++;
 
 	// bottom left
 	if (row + 1 < GRID_ROWS && col - 1 >= 0)
-		if (grid[row+1][col-1] === 1)
+		if (grid[row+1][col-1].value === 1)
 			counter++;
 
 	// bottom mid
 	if (row + 1 < GRID_ROWS)
-		if (grid[row+1][col] === 1)
+		if (grid[row+1][col].value === 1)
 			counter++;
 
 	// bottom right
 	if (row + 1 < GRID_ROWS && col + 1 < GRID_COLS)
-		if (grid[row+1][col+1] === 1)
+		if (grid[row+1][col+1].value === 1)
 			counter++;
 
 	return counter;
