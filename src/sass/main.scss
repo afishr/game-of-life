@@ -1,8 +1,11 @@
 @import 'gameoflife';
 
+$accent: #00ff00;
+$grid-color: #222;
+
 body {
 	background-color: #0A0A0A;
-	color: #00FF00;
+	color: $accent;
 	margin: 0;
 }
 
@@ -15,7 +18,7 @@ table.grid {
 }
 
 table.grid td.cell {
-	border: 1px solid #444;
+	border: 1px solid $grid-color;
 	border-right: none;
 	border-bottom: none;
 	background-color: transparent;
@@ -23,15 +26,15 @@ table.grid td.cell {
 }
 
 table.grid td.cell:last-child {
-	border-right: 1px solid #444;
+	border-right: 1px solid $grid-color;
 }
 
 table.grid tr.row:last-child td.cell {
-	border-bottom: 1px solid #444;
+	border-bottom: 1px solid $grid-color;
 }
 
 table.grid td.cell.alive {
-	background-color: #00FF00;
+	background-color: $accent;
 }
 
 .controls {
@@ -41,10 +44,10 @@ table.grid td.cell.alive {
 }
 
 .controls button {
-	color: #00FF00;
+	color: $accent;
 	padding: 3px 7px;
 	background-color: transparent;
-	border: 2px solid #00FF00;
+	border: 2px solid $accent;
 	outline: none;
 	cursor: pointer;
 	margin-right: 8px;
