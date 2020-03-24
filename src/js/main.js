@@ -1,7 +1,7 @@
-const GRID_WIDTH = 640,
-	GRID_HEIGHT = 640,
-	GRID_ROWS = 50,
-	GRID_COLS = 50,
+const GRID_WIDTH = 600,
+	GRID_HEIGHT = 600,
+	GRID_ROWS = 40,
+	GRID_COLS = 40,
 	GAME_SPEED = 100;
 
 let isPlaying = false,
@@ -107,7 +107,7 @@ function createGrid(rows, cols) {
 		for (let j = 0; j < cols; j++)
 			grid[i][j] = {
 				value: 0,
-				attribute: 'NORMAL'
+				attribute: 0
 			};
 	}
 
@@ -118,6 +118,11 @@ function randomizeGrid(rows, cols) {
 	for (let i = 0; i < rows; i++) {
 		for (let j = 0; j < cols; j++) {
 			grid[i][j].value = Math.round(Math.random());
+			if ((i * j * 2) < (rows * cols / 2)) {
+				grid[i][j].attribute = 1;
+			} else {
+				grid[i][j].attribute = 0;
+			}
 		}
 	}
 }
@@ -128,6 +133,7 @@ function updateTable(rows, cols) {
 			let cell = table.rows[i].cells[j];
 
 			cell.classList.toggle('alive', !!grid[i][j].value);
+			cell.classList.toggle('aggresive', !!grid[i][j].attribute);
 		}
 	}
 }
@@ -166,6 +172,8 @@ function copyGrid(rows, cols) {
 
 function applyRules(row, col) {
 	let neighbours = countNeighbours(row, col);
+
+	nextGrid[row][col].attribute = grid[row][col].attribute;
 
 	if (grid[row][col].value) {
 		if (neighbours < 2) {
