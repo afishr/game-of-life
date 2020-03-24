@@ -68,7 +68,7 @@ gulp.task('style-dev-build', function() {
 			outputStyle: 'expanded'
 		}))
 		.pipe(prefixer({
-			browsers: ['last 5 versions', 'IE 8'],
+			overrideBrowserslist: ['last 5 versions', 'IE 8'],
 			add: true,
 			cascade: false,
 			remove: false
