@@ -1,7 +1,7 @@
 const GRID_WIDTH = 1280,
 	GRID_HEIGHT = 720,
-	GRID_ROWS = 36,
-	GRID_COLS = 64,
+	GRID_ROWS = 100,
+	GRID_COLS = 100,
 	GAME_SPEED = 100;
 
 let isPlaying = false,
