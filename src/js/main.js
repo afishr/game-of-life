@@ -71,7 +71,11 @@ function createTable(rows, cols) {
 			grid[row][col] = 0;
 		}
 		let polygon = environments[currentEnvironment][1];
-		polygon.push([row, col]);
+		if(polygon[environmentOrder]) {
+			polygon[environmentOrder].push([row, col]);
+		} else {
+			polygon.push([[row, col]]);
+		}
 		if (environment[row][col] === 0) {
 			if (currentEnvironment === 1) {
 				aim.classList.add('quit-life');
@@ -172,7 +176,7 @@ function setEnvironment(type, polygon) {
 	const env = createGrid(GRID_ROWS, GRID_COLS);
 	for (let i = 0; i < GRID_ROWS; i++) {
 		for (let j = 0; j < GRID_COLS; j++) {
-			if (inside([i, j], polygon)) {
+			if (inside([i, j], polygon[environmentOrder])) {
 				environment[i][j] = type;
 				env[i][j] = type;
 			}
@@ -265,7 +269,6 @@ function computeNext(rows, cols) {
 			applyRules(i, j);
 		}
 	}
-	console.log('env: ', environments);
 	copyGrid(GRID_ROWS, GRID_COLS);
 }
 
@@ -649,6 +652,7 @@ function setCurrentRole(index) {
 
 function setCurrentEnvironment(index) {
 	currentEnvironment = globalEnv[index][0];
+	environmentOrder = 0;
 	document.getElementById("selected-environment").innerHTML = `<div class="content">${globalEnv[index][1]}</div>`;
 }
 
