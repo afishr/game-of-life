@@ -1,8 +1,5 @@
 const GRID_WIDTH = 1280,
 	GRID_HEIGHT = 720,
-	GRID_ROWS = 100,
-	GRID_COLS = 100,
-	GAME_SPEED = 100,
 	globalRoles = [[0, "Died (remove element)"], [1, "Simple"], [2, "Super"], [3, "Flemish"], [4, "Antisocial"], [5, "Clone"]],
 	globalEnv = [[0, "Simple Zone (remove zone)"], [1, "Quit Zone"], [2, "Reset Zone"], [3, "Anarchy Zone"], [4, "Random Zone"], [5, "Imperial Zone"]];
 let isPlaying = false,
@@ -12,17 +9,22 @@ let isPlaying = false,
 	generations = [],
 	environments = [[[], []], [[], []], [[], []], [[], []], [[], []], [[], []]],
 	environmentOrder = 0,
+	GRID_ROWS = 100,
+	GRID_COLS = 100,
+	GAME_SPEED = 100,
 	interval = null;
 
-const root = document.getElementById('root'),
-	table = createTable(GRID_ROWS, GRID_COLS),
+const root = document.getElementById('root');
+let table = createTable(GRID_ROWS, GRID_COLS),
 	grid = createGrid(GRID_ROWS, GRID_COLS),
 	environment = createGrid(GRID_ROWS, GRID_COLS),
 	nextGrid = createGrid(GRID_ROWS, GRID_COLS);
-createControls();
-
 
 function createTable(rows, cols) {
+	console.log(document.getElementById("root"));
+	const element = document.getElementById("root");
+	element.innerHTML = '';
+
 	const table = document.createElement('table');
 	table.className = 'grid';
 
@@ -101,6 +103,8 @@ function createTable(rows, cols) {
 	root.appendChild(table);
 	setCurrentRole(1);
 	setCurrentEnvironment(1);
+	createControls();
+
 	return table;
 }
 
@@ -190,7 +194,6 @@ function updateTable(rows, cols) {
 	for (let i = 0; i < rows; i++) {
 		for (let j = 0; j < cols; j++) {
 			let cell = table.rows[i].cells[j];
-			cell.className = '';
 			cell.classList.add('cell');
 			if (grid[i][j] === 1) {
 				cell.classList.add('alive');
@@ -637,10 +640,10 @@ function renderEnvironments() {
 		for (let j = 0; j < environments[i][0].length; j++) {
 			html += `<option value="${j}">${j}</option>`;
 		}
-		html += `</select><label style="margin-left: 15px">Remove</label><select id="current-environment" onChange="resetEnvironmentOnChange(event, ${i})">`;
-		for (let j = 0; j < environments[i][0].length; j++) {
-			html += `<option value="${j}">${j}</option>`;
-		}
+		/*		html += `</select><label style="margin-left: 15px">Remove</label><select id="current-environment" onChange="resetEnvironmentOnChange(event, ${i})">`;
+				for (let j = 0; j < environments[i][0].length; j++) {
+					html += `<option value="${j}">${j}</option>`;
+				}*/
 		html += `</select>`
 	}
 	roles.innerHTML = html;
@@ -649,10 +652,23 @@ function renderEnvironments() {
 function resetEnvironmentOnChange(event, index) {
 	currentEnvironment = globalEnv[index][0];
 	console.log('before delete: ', environments);
+	// resetEnvironments(GRID_ROWS, GRID_COLS);
+	// resetGrid(GRID_ROWS, GRID_COLS);
+	// resetEnvironments(GRID_ROWS, GRID_COLS);
+	for (let i = 0; i < GRID_ROWS; i++) {
+		for (let j = 0; j < GRID_COLS; j++) {
+			if (environments[currentEnvironment][index] > 0) {
+				environment[i][j] = 0;
+			}
+			/*if (el[i][j] === value) {
+			}*/
+		}
+	}
 	environments[currentEnvironment][0] = environments[currentEnvironment][0].splice(event, 1);
 	environments[currentEnvironment][1] = environments[currentEnvironment][1].splice(event, 1);
 	console.log('after delete: ', environments[currentEnvironment]);
-	renderEnvironments();
+	// renderEnvironments();
+	updateTable(GRID_ROWS, GRID_COLS);
 }
 
 function addZone(index) {
@@ -683,3 +699,19 @@ function initControls() {
 }
 
 initControls();
+
+function setUI(type, event) {
+	console.log('input events: ', Number(event.target.value));
+	if (type === "width") {
+		GRID_ROWS = Number(event.target.value);
+	} else if (type === "height") {
+		GRID_COLS = Number(event.target.value);
+	} else if (type === "speed") {
+		GAME_SPEED = Number(event.target.value);
+	}
+	table = createTable(GRID_ROWS, GRID_COLS);
+	grid = createGrid(GRID_ROWS, GRID_COLS);
+	environment = createGrid(GRID_ROWS, GRID_COLS);
+	nextGrid = createGrid(GRID_ROWS, GRID_COLS);
+
+}

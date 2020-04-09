@@ -160,6 +160,9 @@ input[type=range]:disabled::-moz-range-thumb {
 // controls
 .initializators {
 	margin: 2rem;
+	display: flex;
+	flex-flow: wrap;
+	width: 40%;
 
 	.title {
 		font-size: 24px;
@@ -183,5 +186,14 @@ input[type=range]:disabled::-moz-range-thumb {
 		width: 18px;
 		height: 18px;
 		text-align: center;
+	}
+
+	.top-element {
+		margin-bottom: 20px;
+		width: 50%;
+	}
+
+	.bottom-element {
+		padding: 0 20px;
 	}
 }

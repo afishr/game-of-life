@@ -10,35 +10,53 @@
 <body>
 <div id="root"></div>
 <div class="initializators">
-	<div style="margin-bottom: 20px;">
+	<div class="top-element">
 		<div class="title">
 			Roles
 		</div>
 		<div id="roles"></div>
 	</div>
-	<div style="margin-bottom: 20px;">
+	<div class="top-element">
 		<div class="title">
 			Environments
 		</div>
 		<div id="environments"></div>
 	</div>
-	<div>
+	<div class="bottom-element">
 		<div class="title">
 			Selected Role
 		</div>
 		<div id="selected-role"></div>
 	</div>
-	<div>
+	<div class="bottom-element">
 		<div class="title">
 			Selected Environment
 		</div>
 		<div id="selected-environment"></div>
 	</div>
-	<div>
+	<div class="bottom-element">
 		<div class="title">
 			Environment Order
 		</div>
 		<div id="environment-order"></div>
+	</div>
+	<div class="bottom-element">
+		<div class="title">
+			Width
+		</div>
+		<input type="number" id="width" value="100" onchange="setUI('width', event)">
+	</div>
+	<div class="bottom-element">
+		<div class="title">
+			Height
+		</div>
+		<input type="number" id="height" value="100" onchange="setUI('height', event)">
+	</div>
+	<div class="bottom-element">
+		<div class="title">
+			Speed
+		</div>
+		<input type="number" id="speed" value="100" onchange="setUI('speed', event)">
 	</div>
 </div>
 <script src="js/main.js"></script>
