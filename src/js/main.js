@@ -194,6 +194,7 @@ function updateTable(rows, cols) {
 	for (let i = 0; i < rows; i++) {
 		for (let j = 0; j < cols; j++) {
 			let cell = table.rows[i].cells[j];
+			cell.className = '';
 			cell.classList.add('cell');
 			if (grid[i][j] === 1) {
 				cell.classList.add('alive');
