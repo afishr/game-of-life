@@ -2,15 +2,16 @@ const GRID_WIDTH = 1280,
 	GRID_HEIGHT = 720,
 	GRID_ROWS = 100,
 	GRID_COLS = 100,
-	GAME_SPEED = 100;
-
+	GAME_SPEED = 100,
+	globalRoles = [[0, "Died"], [1, "Simple"], [2, "Super"], [3, "Flemish"], [4, "Antisocial"], [5, "Clone"]],
+	globalEnv = [[0, "Simple Zone"], [1, "Quit Zone"], [2, "Reset Zone"], [3, "Anarchy Zone"], [4, "Random Zone"], [5, "Imperial Zone"]];
 let isPlaying = false,
 	currentRole = 1,
+	currentEnvironment = 0,
 	currentGeneration = 0,
 	generations = [],
-	resetEnviroments = [],
-	randomEnviroments = [],
-	quitEnviroments = [],
+	environments = [[[], []], [[], []], [[], []], [[], []], [[], []], [[], []]],
+	environmentOrder = 0,
 	interval = null;
 
 const root = document.getElementById('root'),
@@ -69,6 +70,28 @@ function createTable(rows, cols) {
 			aim.classList.remove("alive", "super-cell", "flemish-cell", "antisocial-cell", "clone-cell");
 			grid[row][col] = 0;
 		}
+		let polygon = environments[currentEnvironment][1];
+		polygon.push([row, col]);
+		if (environment[row][col] === 0) {
+			if (currentEnvironment === 1) {
+				aim.classList.add('quit-life');
+			} else if (currentEnvironment === 2) {
+				aim.classList.add('reset-zone');
+			} else if (currentEnvironment === 3) {
+				aim.classList.add('anarchy-zone');
+			} else if (currentEnvironment === 4) {
+				aim.classList.add('random-zone');
+			} else if (currentEnvironment === 5) {
+				aim.classList.add('imperial-zone');
+			}
+			environment[row][col] = currentEnvironment;
+		} else {
+			aim.classList.remove("quit-life", "reset-zone", "anarchy-zone", "random-zone", "imperial-zone");
+			environment[row][col] = 0;
+		}
+		setEnvironment(currentEnvironment, polygon);
+		renderEnvironments();
+		updateTable(GRID_ROWS, GRID_COLS);
 	});
 
 	root.appendChild(table);
@@ -104,6 +127,7 @@ function createControls() {
 		clearInterval(interval);
 
 		resetGrid(GRID_ROWS, GRID_COLS);
+		resetEnvironments(GRID_ROWS, GRID_COLS);
 		updateTable(GRID_ROWS, GRID_COLS);
 	});
 
@@ -140,16 +164,6 @@ function randomizeGrid(rows, cols) {
 			grid[i][j] = Math.round(Math.random() * 12);
 		}
 	}
-	// quit zone
-	setEnvironment(1, [[1, 20], [10, 15], [1, 40]]);
-	// reset zone
-	setEnvironment(2, [[1, 1], [10, 10], [1, 20]]);
-	// anarchy zone
-	setEnvironment(3, [[30, 50], [20, 10], [50, 20]]);
-	// random zone
-	setEnvironment(4, [[30, 30], [40, 60], [60, 20]]);
-	// imperial/fertile zone
-	setEnvironment(5, [[70, 30], [70, 10], [800, 20]]);
 }
 
 function setEnvironment(type, polygon) {
@@ -162,20 +176,8 @@ function setEnvironment(type, polygon) {
 			}
 		}
 	}
-	// for reset zone
-	if (type === 2) {
-		resetEnviroments.push(env);
-	}
-
-	//for random zone
-	if (type === 4) {
-		randomEnviroments.push(env);
-	}
-
-	//for quit zone
-	if (type === 1) {
-		quitEnviroments.push(env);
-	}
+	environments[currentEnvironment][0][environmentOrder] = env;
+	renderEnvironments()
 }
 
 function updateTable(rows, cols) {
@@ -220,6 +222,14 @@ function resetGrid(rows, cols) {
 	}
 	generations = [];
 	currentGeneration = 0;
+}
+
+function resetEnvironments(rows, cols) {
+	for (let i = 0; i < rows; i++) {
+		for (let j = 0; j < cols; j++) {
+			environment[i][j] = 0;
+		}
+	}
 }
 
 function play() {
@@ -528,7 +538,7 @@ function inside(point, vs) {
 }
 
 function checkResetEnvironments() {
-	resetEnviroments.map(el => {
+	environments[2][0].map(el => {
 		const info = getEnvInfo(el, 2);
 		let length = info[0];
 		let liveCell = info[1];
@@ -539,7 +549,7 @@ function checkResetEnvironments() {
 }
 
 function checkRandomEnvironment() {
-	randomEnviroments.map(el => {
+	environments[4][0].map(el => {
 		let count = 0;
 		const randomElement = Math.round(Math.random() * getEnvInfo(el, 4)[0]);
 		for (let i = 0; i < GRID_ROWS; i++) {
@@ -556,7 +566,7 @@ function checkRandomEnvironment() {
 }
 
 function checkQuitEnvironment() {
-	quitEnviroments.map(el => {
+	environments[1][0].map(el => {
 		for (let i = 0; i < GRID_ROWS; i++) {
 			for (let j = 0; j < GRID_COLS; j++) {
 				if (el[i][j] === 1) {
@@ -600,22 +610,49 @@ function resetEnvironment(el, value) {
 	}
 }
 
-function renderRoles(arr) {
+function renderRoles() {
+	let arr = globalRoles;
 	const roles = document.getElementById("roles");
 	let html = '';
 	for (let i = 0; i < arr.length; i++) {
-		html += `<div class="role" onclick="setCurrentRole(${arr[i][0]})">${arr[i][1]}</div>`;
+		html += `<div class="content" onclick="setCurrentRole(${i})">${arr[i][1]}</div>`;
 	}
 	roles.innerHTML = html;
 }
 
-function setCurrentRole(role) {
-	currentRole = role;
+function renderEnvironments() {
+	let arr = globalEnv;
+	const roles = document.getElementById("environments");
+	let html = '';
+	for (let i = 0; i < arr.length; i++) {
+		html += `<div class="content" onclick="setCurrentEnvironment(${i})">${arr[i][1]}</div>
+<select id="current-environment" onChange="setEnvironmentOrder(event)">`;
+		for (let j = 0; j < environments[i][0].length; j++) {
+			html += `<option value="${j}">${j}</option><option value="${1}">${1}</option>`;
+		}
+		html += `</select>`;
+	}
+	roles.innerHTML = html;
+}
+
+function setCurrentRole(index) {
+	currentRole = globalRoles[index][0];
+	document.getElementById("selected-role").innerHTML = `<div class="content">${globalRoles[index][1]}</div>`;
+}
+
+function setCurrentEnvironment(index) {
+	currentEnvironment = globalEnv[index][0];
+	document.getElementById("selected-environment").innerHTML = `<div class="content">${globalEnv[index][1]}</div>`;
+}
+
+function setEnvironmentOrder(event) {
+	environmentOrder = Number(event.target.value);
+	document.getElementById("environment-order").innerHTML = `<div class="content">${Number(event.target.value)}</div>`;
 }
 
 function initControls() {
-	const roles = [[0, "Died"], [1, "Simple"], [2, "Super"], [3, "Flemish"], [4, "Antisocial"], [5, "Clone"]];
-	renderRoles(roles);
+	renderRoles();
+	renderEnvironments();
 }
 
 initControls();
