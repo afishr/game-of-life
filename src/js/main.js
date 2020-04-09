@@ -3,8 +3,8 @@ const GRID_WIDTH = 1280,
 	GRID_ROWS = 100,
 	GRID_COLS = 100,
 	GAME_SPEED = 100,
-	globalRoles = [[0, "Died"], [1, "Simple"], [2, "Super"], [3, "Flemish"], [4, "Antisocial"], [5, "Clone"]],
-	globalEnv = [[0, "Simple Zone"], [1, "Quit Zone"], [2, "Reset Zone"], [3, "Anarchy Zone"], [4, "Random Zone"], [5, "Imperial Zone"]];
+	globalRoles = [[0, "Died (remove element)"], [1, "Simple"], [2, "Super"], [3, "Flemish"], [4, "Antisocial"], [5, "Clone"]],
+	globalEnv = [[0, "Simple Zone (remove zone)"], [1, "Quit Zone"], [2, "Reset Zone"], [3, "Anarchy Zone"], [4, "Random Zone"], [5, "Imperial Zone"]];
 let isPlaying = false,
 	currentRole = 1,
 	currentEnvironment = 0,
@@ -95,6 +95,8 @@ function createTable(rows, cols) {
 	});
 
 	root.appendChild(table);
+	setCurrentRole(1);
+	setCurrentEnvironment(1);
 	return table;
 }
 
@@ -263,7 +265,7 @@ function computeNext(rows, cols) {
 			applyRules(i, j);
 		}
 	}
-
+	console.log('env: ', environments);
 	copyGrid(GRID_ROWS, GRID_COLS);
 }
 
@@ -625,14 +627,19 @@ function renderEnvironments() {
 	const roles = document.getElementById("environments");
 	let html = '';
 	for (let i = 0; i < arr.length; i++) {
-		html += `<div class="content" onclick="setCurrentEnvironment(${i})">${arr[i][1]}</div>
+		html += `<div class="content" onclick="setCurrentEnvironment(${i})">${arr[i][1]}<span class="plus-btn" onclick="addZone(${i})">+</span></div>
 <select id="current-environment" onChange="setEnvironmentOrder(event)">`;
 		for (let j = 0; j < environments[i][0].length; j++) {
-			html += `<option value="${j}">${j}</option><option value="${1}">${1}</option>`;
+			html += `<option value="${j}">${j}</option>`;
 		}
 		html += `</select>`;
 	}
 	roles.innerHTML = html;
+}
+
+function addZone(index) {
+	environments[globalEnv[index][0]][0].push([]);
+	renderEnvironments();
 }
 
 function setCurrentRole(index) {

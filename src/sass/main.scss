@@ -172,4 +172,16 @@ input[type=range]:disabled::-moz-range-thumb {
 		color: white;
 		padding: 10px 0;
 	}
+
+	.plus-btn {
+		background-color: forestgreen;
+		border: 1px solid white;
+		margin-left: 5px;
+		display: inline-grid;
+		padding: 5px;
+		border-radius: 50%;
+		width: 18px;
+		height: 18px;
+		text-align: center;
+	}
 }
