@@ -631,7 +631,7 @@ function renderEnvironments() {
 	let html = '';
 	for (let i = 0; i < arr.length; i++) {
 		html += `<div class="content" onclick="setCurrentEnvironment(${i})">${arr[i][1]}<span class="plus-btn" onclick="addZone(${i})">+</span></div>
-<select id="current-environment" onChange="setEnvironmentOrder(event)">`;
+<select id="current-environment" onChange="setEnvironmentOrder(event, ${i})">`;
 		for (let j = 0; j < environments[i][0].length; j++) {
 			html += `<option value="${j}">${j}</option>`;
 		}
@@ -656,7 +656,8 @@ function setCurrentEnvironment(index) {
 	document.getElementById("selected-environment").innerHTML = `<div class="content">${globalEnv[index][1]}</div>`;
 }
 
-function setEnvironmentOrder(event) {
+function setEnvironmentOrder(event, index) {
+	currentEnvironment = globalEnv[index][0];
 	environmentOrder = Number(event.target.value);
 	document.getElementById("environment-order").innerHTML = `<div class="content">${Number(event.target.value)}</div>`;
 }
