@@ -71,7 +71,7 @@ function createTable(rows, cols) {
 			grid[row][col] = 0;
 		}
 		let polygon = environments[currentEnvironment][1];
-		if(polygon[environmentOrder]) {
+		if (polygon[environmentOrder]) {
 			polygon[environmentOrder].push([row, col]);
 		} else {
 			polygon.push([[row, col]]);
@@ -227,6 +227,8 @@ function resetGrid(rows, cols) {
 		}
 	}
 	generations = [];
+	environments = [[[], []], [[], []], [[], []], [[], []], [[], []], [[], []]];
+	environmentOrder = 0;
 	currentGeneration = 0;
 }
 
@@ -631,13 +633,26 @@ function renderEnvironments() {
 	let html = '';
 	for (let i = 0; i < arr.length; i++) {
 		html += `<div class="content" onclick="setCurrentEnvironment(${i})">${arr[i][1]}<span class="plus-btn" onclick="addZone(${i})">+</span></div>
-<select id="current-environment" onChange="setEnvironmentOrder(event, ${i})">`;
+<label>Order</label><select id="current-environment" onChange="setEnvironmentOrder(event, ${i})">`;
 		for (let j = 0; j < environments[i][0].length; j++) {
 			html += `<option value="${j}">${j}</option>`;
 		}
-		html += `</select>`;
+		html += `</select><label style="margin-left: 15px">Remove</label><select id="current-environment" onChange="resetEnvironmentOnChange(event, ${i})">`;
+		for (let j = 0; j < environments[i][0].length; j++) {
+			html += `<option value="${j}">${j}</option>`;
+		}
+		html += `</select>`
 	}
 	roles.innerHTML = html;
+}
+
+function resetEnvironmentOnChange(event, index) {
+	currentEnvironment = globalEnv[index][0];
+	console.log('before delete: ', environments);
+	environments[currentEnvironment][0] = environments[currentEnvironment][0].splice(event, 1);
+	environments[currentEnvironment][1] = environments[currentEnvironment][1].splice(event, 1);
+	console.log('after delete: ', environments[currentEnvironment]);
+	renderEnvironments();
 }
 
 function addZone(index) {
