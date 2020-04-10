@@ -1,7 +1,17 @@
 const GRID_WIDTH = 1280,
 	GRID_HEIGHT = 720,
-	globalRoles = [[0, "Died (remove element)"], [1, "Simple"], [2, "Super"], [3, "Flemish"], [4, "Antisocial"], [5, "Clone"]],
-	globalEnv = [[0, "Simple Zone (remove zone)"], [1, "Quit Zone"], [2, "Reset Zone"], [3, "Anarchy Zone"], [4, "Random Zone"], [5, "Imperial Zone"]];
+	globalRoles = [[0, "Died (remove element)", ""],
+		[1, "Simple", "alive"],
+		[2, "Super", "super-cell"],
+		[3, "Flemish", "flemish-cell"],
+		[4, "Antisocial", "antisocial-cell"],
+		[5, "Clone", "clone-cell"]],
+	globalEnv = [[0, "Simple Zone (remove zone)", ""],
+		[1, "Quit Zone", "quit-life"],
+		[2, "Reset Zone", "reset-zone"],
+		[3, "Anarchy Zone", "anarchy-zone"],
+		[4, "Random Zone", "random-zone"],
+		[5, "Imperial Zone", "imperial-zone"]];
 let isPlaying = false,
 	currentRole = 1,
 	currentEnvironment = 0,
@@ -54,20 +64,12 @@ function createTable(rows, cols) {
 			return;
 
 		if (grid[row][col] === 0) {
-			if (currentRole === 1) {
-				aim.classList.add('alive');
-			} else if (currentRole === 2) {
-				aim.classList.add('super-cell');
-			} else if (currentRole === 3) {
-				aim.classList.add('flemish-cell');
-			} else if (currentRole === 4) {
-				aim.classList.add('antisocial-cell');
-			} else if (currentRole === 5) {
-				aim.classList.add('clone-cell');
+			if (currentRole > 0) {
+				aim.classList.add(globalRoles[currentRole][2]);
 			}
 			grid[row][col] = currentRole;
 		} else {
-			aim.classList.remove("alive", "super-cell", "flemish-cell", "antisocial-cell", "clone-cell");
+			aim.classList.remove(globalRoles[1][2], globalRoles[2][2], globalRoles[3][2], globalRoles[4][2], globalRoles[5][2]);
 			grid[row][col] = 0;
 		}
 		let polygon = environments[currentEnvironment][1];
@@ -77,20 +79,12 @@ function createTable(rows, cols) {
 			polygon.push([[row, col]]);
 		}
 		if (environment[row][col] === 0) {
-			if (currentEnvironment === 1) {
-				aim.classList.add('quit-life');
-			} else if (currentEnvironment === 2) {
-				aim.classList.add('reset-zone');
-			} else if (currentEnvironment === 3) {
-				aim.classList.add('anarchy-zone');
-			} else if (currentEnvironment === 4) {
-				aim.classList.add('random-zone');
-			} else if (currentEnvironment === 5) {
-				aim.classList.add('imperial-zone');
+			if (currentEnvironment > 0) {
+				aim.classList.add(globalEnv[currentEnvironment][2]);
 			}
 			environment[row][col] = currentEnvironment;
 		} else {
-			aim.classList.remove("quit-life", "reset-zone", "anarchy-zone", "random-zone", "imperial-zone");
+			aim.classList.remove(globalEnv[1][2], globalEnv[2][2], globalEnv[3][2], globalEnv[4][2], globalEnv[5][2]);
 			environment[row][col] = 0;
 		}
 		setEnvironment(currentEnvironment, polygon);
@@ -196,29 +190,11 @@ function updateTable(rows, cols) {
 			let cell = table.rows[i].cells[j];
 			cell.className = '';
 			cell.classList.add('cell');
-			if (grid[i][j] === 1) {
-				cell.classList.add('alive');
-			} else if (grid[i][j] === 2) {
-				cell.classList.add('super-cell');
-			} else if (grid[i][j] === 3) {
-				cell.classList.add('flemish-cell');
-			} else if (grid[i][j] === 4) {
-				cell.classList.add('antisocial-cell');
-			} else if (grid[i][j] === 5) {
-				cell.classList.add('clone-cell');
-			} else {
-				cell.classList.remove('alive');
+			if (globalRoles[grid[i][j]] && globalRoles[grid[i][j]][2]) {
+				cell.classList.add(globalRoles[grid[i][j]][2]);
 			}
-			if (environment[i][j] === 1) {
-				cell.classList.add('quit-life');
-			} else if (environment[i][j] === 2) {
-				cell.classList.add('reset-zone');
-			} else if (environment[i][j] === 3) {
-				cell.classList.add('anarchy-zone');
-			} else if (environment[i][j] === 4) {
-				cell.classList.add('random-zone');
-			} else if (environment[i][j] === 5) {
-				cell.classList.add('imperial-zone');
+			if (globalEnv[environment[i][j]] && globalEnv[environment[i][j]][2]) {
+				cell.classList.add(globalEnv[environment[i][j]][2]);
 			}
 		}
 	}
