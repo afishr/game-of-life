@@ -433,6 +433,9 @@ function applyRules(row, col) {
 			if (type === 2) {
 				nextGrid[row][col] = 5;
 			}
+			if (type === 3) {
+				nextGrid[row][col] = 3;
+			}
 		}
 		if (neighbours === 4) {
 			// revives with probability of 20% an antisocial cell
