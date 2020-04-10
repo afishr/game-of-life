@@ -448,8 +448,22 @@ function applyRules(row, col) {
 		}
 	} else {
 		if (neighbours === 3) {
-			// revives
+			// revives simple cell
 			nextGrid[row][col] = 1;
+		}
+		if (neighbours === 5) {
+			// revives clone cell with probability 10%
+			const type = Math.round(Math.random() * 9);
+			if (type === 2) {
+				nextGrid[row][col] = 5;
+			}
+		}
+		if (neighbours === 4) {
+			// revives with probability of 20% an antisocial cell
+			const type = Math.round(Math.random() * 4);
+			if (type === 3) {
+				nextGrid[row][col] = 4;
+			}
 		}
 	}
 }
