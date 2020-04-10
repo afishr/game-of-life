@@ -21,7 +21,6 @@ let table = createTable(GRID_ROWS, GRID_COLS),
 	nextGrid = createGrid(GRID_ROWS, GRID_COLS);
 
 function createTable(rows, cols) {
-	console.log(document.getElementById("root"));
 	const element = document.getElementById("root");
 	element.innerHTML = '';
 
@@ -49,8 +48,7 @@ function createTable(rows, cols) {
 	table.addEventListener('click', event => {
 		const aim = event.target;
 		let col = aim.cellIndex,
-			row = aim.parentNode.rowIndex,
-			isAlive = grid[row][col];
+			row = aim.parentNode.rowIndex;
 
 		if (!aim.classList.contains('cell'))
 			return;
@@ -641,39 +639,33 @@ function renderEnvironments() {
 		for (let j = 0; j < environments[i][0].length; j++) {
 			html += `<option value="${j}">${j}</option>`;
 		}
-		/*		html += `</select><label style="margin-left: 15px">Remove</label><select id="current-environment" onChange="resetEnvironmentOnChange(event, ${i})">`;
-				for (let j = 0; j < environments[i][0].length; j++) {
-					html += `<option value="${j}">${j}</option>`;
-				}*/
-		html += `</select>`
+		html += `</select><label style="margin-left: 15px; color: red;" onclick="resetEnvironmentOnChange(${i})">Remove</label>`;
 	}
 	roles.innerHTML = html;
 }
 
-function resetEnvironmentOnChange(event, index) {
+function resetEnvironmentOnChange(index) {
 	currentEnvironment = globalEnv[index][0];
-	console.log('before delete: ', environments);
-	// resetEnvironments(GRID_ROWS, GRID_COLS);
-	// resetGrid(GRID_ROWS, GRID_COLS);
-	// resetEnvironments(GRID_ROWS, GRID_COLS);
 	for (let i = 0; i < GRID_ROWS; i++) {
 		for (let j = 0; j < GRID_COLS; j++) {
-			if (environments[currentEnvironment][index] > 0) {
+			if (environments[currentEnvironment][0][environmentOrder][i][j] && environments[currentEnvironment][0][environmentOrder][i][j] > 0) {
 				environment[i][j] = 0;
 			}
-			/*if (el[i][j] === value) {
-			}*/
 		}
 	}
-	environments[currentEnvironment][0] = environments[currentEnvironment][0].splice(event, 1);
-	environments[currentEnvironment][1] = environments[currentEnvironment][1].splice(event, 1);
-	console.log('after delete: ', environments[currentEnvironment]);
-	// renderEnvironments();
+	environments[currentEnvironment][1][environmentOrder] = [];
+	environments[currentEnvironment][0][environmentOrder] = [];
+	if (environmentOrder > 0) {
+		environmentOrder--;
+		setEnvironmentOrder(environmentOrder, index, true);
+	}
+	renderEnvironments();
 	updateTable(GRID_ROWS, GRID_COLS);
 }
 
 function addZone(index) {
 	environments[globalEnv[index][0]][0].push([]);
+	environmentOrder++;
 	renderEnvironments();
 }
 
@@ -688,10 +680,10 @@ function setCurrentEnvironment(index) {
 	document.getElementById("selected-environment").innerHTML = `<div class="content">${globalEnv[index][1]}</div>`;
 }
 
-function setEnvironmentOrder(event, index) {
+function setEnvironmentOrder(event, index, simple) {
 	currentEnvironment = globalEnv[index][0];
-	environmentOrder = Number(event.target.value);
-	document.getElementById("environment-order").innerHTML = `<div class="content">${Number(event.target.value)}</div>`;
+	environmentOrder = !simple ? Number(event.target.value) : environmentOrder;
+	document.getElementById("environment-order").innerHTML = `<div class="content">${!simple ? Number(event.target.value) : environmentOrder}</div>`;
 }
 
 function initControls() {
@@ -702,7 +694,6 @@ function initControls() {
 initControls();
 
 function setUI(type, event) {
-	console.log('input events: ', Number(event.target.value));
 	if (type === "width") {
 		GRID_ROWS = Number(event.target.value);
 	} else if (type === "height") {
@@ -714,5 +705,4 @@ function setUI(type, event) {
 	grid = createGrid(GRID_ROWS, GRID_COLS);
 	environment = createGrid(GRID_ROWS, GRID_COLS);
 	nextGrid = createGrid(GRID_ROWS, GRID_COLS);
-
 }
