@@ -616,7 +616,8 @@ function renderRoles() {
 	const roles = document.getElementById("roles");
 	let html = '';
 	for (let i = 0; i < arr.length; i++) {
-		html += `<div class="content" onclick="setCurrentRole(${i})">${arr[i][1]}</div>`;
+		html += `<div class="content" onclick="setCurrentRole(${i})">${arr[i][1]}${arr[i][2]}
+<span class="role-indicator ${arr[i][2]}"></span></div>`;
 	}
 	roles.innerHTML = html;
 }
@@ -628,9 +629,8 @@ function renderEnvironments() {
 	for (let i = 0; i < arr.length; i++) {
 		html += `<div class="content" onclick="setCurrentEnvironment(${i})">${arr[i][1]}`;
 		if (i > 0) {
-			html += `<span class="plus-btn" onclick="addZone(${i})">+</span>`;
+			html += `<span class="plus-btn" onclick="addZone(${i})">+</span><span class="role-indicator ${arr[i][2]}"></span>`;
 		}
-		;
 		html += `</div>`;
 		if (i > 0) {
 			html += `<label>Order</label><select id="current-environment" onChange="setEnvironmentOrder(event, ${i})">`;
