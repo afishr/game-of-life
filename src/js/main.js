@@ -184,7 +184,9 @@ function setEnvironment(type, polygon) {
 			}
 		}
 	}
-	environments[currentEnvironment][0][environmentOrder] = env;
+	if (type > 0) {
+		environments[currentEnvironment][0][environmentOrder] = env;
+	}
 	renderEnvironments()
 }
 
@@ -634,12 +636,19 @@ function renderEnvironments() {
 	const roles = document.getElementById("environments");
 	let html = '';
 	for (let i = 0; i < arr.length; i++) {
-		html += `<div class="content" onclick="setCurrentEnvironment(${i})">${arr[i][1]}<span class="plus-btn" onclick="addZone(${i})">+</span></div>
-<label>Order</label><select id="current-environment" onChange="setEnvironmentOrder(event, ${i})">`;
-		for (let j = 0; j < environments[i][0].length; j++) {
-			html += `<option value="${j}">${j}</option>`;
+		html += `<div class="content" onclick="setCurrentEnvironment(${i})">${arr[i][1]}`;
+		if (i > 0) {
+			html += `<span class="plus-btn" onclick="addZone(${i})">+</span>`;
 		}
-		html += `</select><label style="margin-left: 15px; color: red;" onclick="resetEnvironmentOnChange(${i})">Remove</label>`;
+		;
+		html += `</div>`;
+		if (i > 0) {
+			html += `<label>Order</label><select id="current-environment" onChange="setEnvironmentOrder(event, ${i})">`;
+			for (let j = 0; j < environments[i][0].length; j++) {
+				html += `<option value="${j}">${j}</option>`;
+			}
+			html += `</select><label style="margin-left: 15px; color: red;" onclick="resetEnvironmentOnChange(${i})">Remove</label>`;
+		}
 	}
 	roles.innerHTML = html;
 }
@@ -677,12 +686,14 @@ function setCurrentRole(index) {
 function setCurrentEnvironment(index) {
 	currentEnvironment = globalEnv[index][0];
 	environmentOrder = 0;
+	environments[0] = [[], []];
 	document.getElementById("selected-environment").innerHTML = `<div class="content">${globalEnv[index][1]}</div>`;
 }
 
 function setEnvironmentOrder(event, index, simple) {
 	currentEnvironment = globalEnv[index][0];
 	environmentOrder = !simple ? Number(event.target.value) : environmentOrder;
+	environments[0] = [[], []];
 	document.getElementById("environment-order").innerHTML = `<div class="content">${!simple ? Number(event.target.value) : environmentOrder}</div>`;
 }
 
