@@ -198,6 +198,7 @@ function updateTable(rows, cols) {
 			}
 		}
 	}
+	getPopulationDensity();
 }
 
 function resetGrid(rows, cols) {
@@ -210,6 +211,7 @@ function resetGrid(rows, cols) {
 	environments = [[[], []], [[], []], [[], []], [[], []], [[], []], [[], []]];
 	environmentOrder = 0;
 	currentGeneration = 0;
+	document.getElementById("generations").innerHTML = `<div class="content">${currentGeneration}</div>`;
 }
 
 function resetEnvironments(rows, cols) {
@@ -227,6 +229,7 @@ function play() {
 
 function computeNext(rows, cols) {
 	currentGeneration++;
+	document.getElementById("generations").innerHTML = `<div class="content">${currentGeneration}</div>`;
 	if (currentGeneration % 5 === 1) {
 		generations[0] = grid;
 	} else if (currentGeneration % 5 === 2) {
@@ -709,4 +712,18 @@ function setUI(type, event) {
 	grid = createGrid(GRID_ROWS, GRID_COLS);
 	environment = createGrid(GRID_ROWS, GRID_COLS);
 	nextGrid = createGrid(GRID_ROWS, GRID_COLS);
+}
+
+function getPopulationDensity() {
+	const element = document.getElementById("population");
+	let population = 0;
+	for (let i = 0; i < GRID_ROWS; i++) {
+		for (let j = 0; j < GRID_COLS; j++) {
+			if (grid[i][j] > 0 && grid[i][j] < 6) {
+				population++;
+			}
+		}
+	}
+	population = (population * 100) / (GRID_COLS * GRID_ROWS);
+	element.innerHTML = `<div class="content">${population} %</div>`;
 }
