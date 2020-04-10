@@ -622,7 +622,7 @@ function renderRoles() {
 	const roles = document.getElementById("roles");
 	let html = '';
 	for (let i = 0; i < arr.length; i++) {
-		html += `<div class="content" onclick="setCurrentRole(${i})">${arr[i][1]}${arr[i][2]}
+		html += `<div class="content" onclick="setCurrentRole(${i})">${arr[i][1]}
 <span class="role-indicator ${arr[i][2]}"></span></div>`;
 	}
 	roles.innerHTML = html;
