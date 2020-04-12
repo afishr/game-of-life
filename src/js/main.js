@@ -702,9 +702,9 @@ initControls();
 
 function setUI(type, event) {
 	if (type === "width") {
-		GRID_ROWS = Number(event.target.value);
-	} else if (type === "height") {
 		GRID_COLS = Number(event.target.value);
+	} else if (type === "height") {
+		GRID_ROWS = Number(event.target.value);
 	} else if (type === "speed") {
 		GAME_SPEED = Number(event.target.value);
 	}
