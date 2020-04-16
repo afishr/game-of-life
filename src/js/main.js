@@ -275,7 +275,7 @@ function applyRules(row, col) {
 	// 4 - antisocial cell
 	// 5 - clone cell
 
-	if (grid[row][col] === 2) {
+	if (grid[row][col] === 3) {
 		neighbours = countNeighbours(row, col, 'flemish', [1, 2, 3, 4, 5]);
 	} else if (grid[row][col] === 4) {
 		neighbours = countNeighbours(row, col, '', [1, 2, 3, 4, 5]);
@@ -436,6 +436,7 @@ function applyRules(row, col) {
 			if (type === 2) {
 				nextGrid[row][col] = 5;
 			}
+			// revives flemish cell with probability 10%
 			if (type === 3) {
 				nextGrid[row][col] = 3;
 			}
