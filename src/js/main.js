@@ -275,7 +275,7 @@ function applyRules(row, col) {
 	// 4 - antisocial cell
 	// 5 - clone cell
 
-	if (grid[row][col] === 3) {
+	if (grid[row][col] === 3 || grid[row][col] === 2) {
 		neighbours = countNeighbours(row, col, 'flemish', [1, 2, 3, 4, 5]);
 	} else if (grid[row][col] === 4) {
 		neighbours = countNeighbours(row, col, '', [1, 2, 3, 4, 5]);
